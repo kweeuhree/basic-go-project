@@ -1,21 +1,21 @@
-// define a distinct name template called base
-// which contains the content that appears on every page
 {{define "base"}}
 <!doctype html>
 <html lang='en'>
+    {{/* define a distinct name template called base
+    which contains the content that appears on every page */}}
     <head>
         <meta charset='utf-8'>
-        // invoke named template called "title"
+        {{/* invoke named template called "title" */}}
         <title>{{template "title" .}} - Snippetbox</title>
-        // dot at the end of the action represents any dynamic data
-        // to be passed to the invoked template
+        {{/* dot at the end of the action represents any dynamic data
+        to be passed to the invoked template */}}
     </head>
 <body>
     <header>
         <h1><a href='/'>Snippetbox</a></h1>
     </header>
     <main>
-        // invoke named template called "main"
+        {{/* invoke named template called "main" */}}
         {{template "main" .}}
     </main>
     <footer>Powered by <a href='https://golang.org/'>Go</a></footer>
