@@ -7,22 +7,6 @@ import (
 	"net/http"
 )
 
-func home(w http.ResponseWriter, r *http.Request) {
-	// check if the page exists
-	if r.URL.Path != ("/") {
-		http.NotFound(w, r)
-		return
-	}
-
-	w.Write([]byte("hello byte"))
-}
-
-func snippetView(w http.ResponseWriter, r *http.Request) {
-	// get id from params
-	id, err :=
-		w.Write([]byte("snippet with %d...", id))
-}
-
 // define main point of entry
 func main() {
 	// initialize servemux
