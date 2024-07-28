@@ -1,0 +1,5 @@
+[build]
+bin = "bin/main.exe" # Binary file name
+cmd = "go build -o bin/main.exe ./cmd/web" # Command to build the binary
+include_ext = ["go", "tpl", "tmpl", "html"] # Watch file extensions
+exclude_dir = ["vendor", "bin"] # Exclude these directories
