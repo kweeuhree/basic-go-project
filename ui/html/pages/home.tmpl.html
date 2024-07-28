@@ -3,7 +3,7 @@
 
     <head>
         <meta charset='utf-8'>
-        <title>Home - Snippetbox</title>
+        <title>{{define "title"}}Home{{end}} - Snippetbox</title>
     </head>
 
     <body>
@@ -12,8 +12,10 @@
         </header>
 
         <main>
-            <h2>Latest Snippets</h2>
-            <p>There's nothing to see here yet!</p>
+            {{define "main"}}
+                <h2>Latest Snippets</h2>
+                <p>There's nothing to see here yet!</p>
+            {{end}}
         </main>
 
         <footer>Powered by <a href='https://golang.org/'>Go</a></footer>
