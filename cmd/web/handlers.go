@@ -45,6 +45,8 @@ func home(w http.ResponseWriter, r *http.Request) {
 	// use the Execute() method on the template set to write the
 	// template content as the response body. The last parameter to Execute()
 	// represents any dynamic data that we want to pass in.
+	// -- use the ExecuteTemplate() method to respond using the content
+	// -- of the base template (which in turn invokes title and main templates).
 	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
 		log.Print(err.Error())
