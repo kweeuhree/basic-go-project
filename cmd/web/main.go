@@ -6,6 +6,7 @@ import (
 	"flag" // handle command-line glags and arguments
 	"log"
 	"net/http"
+	"os" // operating system-level operations: handle files, directories, env variables, etc
 )
 
 // define main point of entry
@@ -22,6 +23,18 @@ func main() {
 	// otherwise it will always contain the default value of ":4000"
 	// application will be terminated in case of any errors
 	flag.Parse()
+
+	// Use log.New() to create a logger for writing information messages.
+	// Parameters: the destination to write the logs to (os.Stdout), a string
+	// prefix for message (INFO followed by a tab), and flags to indicate
+	// what additional information to include (local date and time).
+	// The flags are joined using the bitwise OR operator |.
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+
+	// Create a logger for writing error messages in the same way, but use
+	// 	stderr as the destination and use the log.Lshortfile flag to include the
+	// relevant file name and line number.
+	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	// initialize servemux
 	mux := http.NewServeMux()
@@ -48,8 +61,8 @@ func main() {
 	// use log.Printf() to interpolate the address with the log message
 	// -- will also call os.Exit(1) after writing the message,
 	// -- causing the application to immediately exit.
-	log.Printf("Starting server on %s", *addr)
+	infoLog.Printf("Starting server on %s", *addr)
 	err := http.ListenAndServe(*addr, mux)
 	// in case of errors log and exit
-	log.Fatal(err)
+	errorLog.Fatal(err)
 }
