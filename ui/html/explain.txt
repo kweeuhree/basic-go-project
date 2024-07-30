@@ -1,0 +1,8 @@
+To to invoke one template from another {{template}} action can be used. 
+But Go also provides a {{block}}...{{end}} action which you can use instead. 
+This acts like the {{template}} action, except it allows you to specify some 
+default content if the template being invoked doesn’t exist in the current 
+template set.
+In the context of a web application, this is useful when you want to
+provide some default content (such as a sidebar) which individual
+pages can override on a case-by-case basis if they need to.
