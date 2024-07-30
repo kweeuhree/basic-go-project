@@ -11,7 +11,7 @@ import (
 // define main point of entry
 func main() {
 
-	// define a new command-line flag with name 'addr', a adefault value of ":4000"
+	// define a new command-line flag with name 'addr', a default value of ":4000"
 	// and short help text explaining what the flag controls. The value of the flag
 	// will be stored in the addr variable at runtime
 	addr := flag.String("addr", ":4000", "HTTP network address")
@@ -46,6 +46,8 @@ func main() {
 	// value, not the value itself. The dereference of the pointer is needed before the usage.
 	//(prefix it with *)
 	// use log.Printf() to interpolate the address with the log message
+	// -- will also call os.Exit(1) after writing the message,
+	// -- causing the application to immediately exit.
 	log.Printf("Starting server on %s", *addr)
 	err := http.ListenAndServe(*addr, mux)
 	// in case of errors log and exit
