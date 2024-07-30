@@ -7,3 +7,58 @@ The Content-Type is automatically set from the file extension
 using the mime.TypeByExtension() function. You can add your
 own custom extensions and content types using the
 mime.AddExtensionType() function if necessary.
+
+-------------The http.Handler interface----------
+Strictly speaking, handler is an object which satisfies the http.Handler interface:
+
+type Handler interface {
+    ServeHTTP(ResponseWriter, *Request)
+}
+
+In simple terms, this basically means that to be a handler an object
+must have a ServeHTTP() method with the exact signature:
+
+ServeHTTP(http.ResponseWriter, *http.Request)
+
+So in its simplest form a handler might look something like this:
+
+type home struct {}
+func (h *home) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+    w.Write([]byte("This is my home page"))
+}
+
+Here we have an object (in this case it’s a home struct, but it could
+equally be a string or function or anything else), and we’ve
+implemented a method with the signature ServeHTTP(http.ResponseWriter, *http.Request) on it. 
+That’s all we need to make a handler.
+
+You could then register this with a servemux using the Handle method like so:
+mux := http.NewServeMux()
+mux.Handle("/", &home{})
+
+When this servemux receives a HTTP request for "/", it will then call
+the ServeHTTP() method of the home struct — which in turn writes the HTTP response.
+
+----------Handler functions----------
+In practice it’s far more common to write your handlers as a normal
+function transformed into a handler:
+
+func home(w http.ResponseWriter, r *http.Request) {
+    w.Write([]byte("This is my home page"))
+}
+
+Transform it into a handler using the http.HandlerFunc() adapter, like so:
+mux := http.NewServeMux()
+mux.Handle("/", http.HandlerFunc(home))
+
+The http.HandlerFunc() adapter works by automatically adding a
+ServeHTTP() method to the home function. When executed, this
+ServeHTTP() method then simply calls the content of the original
+home function. It’s a roundabout but convenient way of coercing a
+normal function into satisfying the http.Handler interface.
+
+This is just some syntactic sugar that transforms a function to a handler and
+registers it in one step, instead of having to do it manually:
+
+mux := http.NewServeMux()
+mux.HandleFunc("/", home)
