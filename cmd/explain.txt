@@ -2,3 +2,8 @@ The cmd directory will contain the application-specific code for the
 executable applications in the project. For now we’ll have just one
 executable application — the web application — which will live
 under the cmd/web directory.
+
+The Content-Type is automatically set from the file extension
+using the mime.TypeByExtension() function. You can add your
+own custom extensions and content types using the
+mime.AddExtensionType() function if necessary.
