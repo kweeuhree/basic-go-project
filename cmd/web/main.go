@@ -14,7 +14,7 @@ func main() {
 	// define a new command-line flag with name 'addr', a adefault value of ":4000"
 	// and short help text explaining what the flag controls. The value of the flag
 	// will be stored in the addr variable at runtime
-	addr := flag.String("addr", ":4000", "HTTP network addres")
+	addr := flag.String("addr", ":4000", "HTTP network address")
 
 	// use flag.Parse() function to parse the command-line flag
 	// This reads in the command-line glaf value and assigns it to the
