@@ -36,7 +36,7 @@ func main() {
 	// relevant file name and line number.
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
-	// initialize servemux
+	// initialize a new servemux
 	mux := http.NewServeMux()
 
 	// Create a file server which serves files out of the "./ui/static"
@@ -55,6 +55,16 @@ func main() {
 	mux.HandleFunc("/snippet/view", snippetView)     // fixed path
 	mux.HandleFunc("/snippet/create", snippetCreate) // fixed path
 
+	// Initialize a new http.Server struct. Set the Addr and Handler fields so
+	// that the server uses the same network address and routes as before,
+	// and set the ErrorLog field so that the server now uses the custom errorLog
+	// logger in the event of any problems.
+	srv := &http.Server{
+		Addr:     *addr,
+		ErrorLog: errorLog,
+		Handler:  mux,
+	}
+
 	// The value returned form the flag.String() function is a pointer to the flag
 	// value, not the value itself. The dereference of the pointer is needed before the usage.
 	//(prefix it with *)
@@ -62,7 +72,7 @@ func main() {
 	// -- will also call os.Exit(1) after writing the message,
 	// -- causing the application to immediately exit.
 	infoLog.Printf("Starting server on %s", *addr)
-	err := http.ListenAndServe(*addr, mux)
+	err := srv.ListenAndServe()
 	// in case of errors log and exit
 	errorLog.Fatal(err)
 }
