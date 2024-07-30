@@ -1,0 +1,2 @@
+For some applications you might want to break out certain bits of
+HTML into partials that can be reused in different pages or layouts.
