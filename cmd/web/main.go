@@ -9,6 +9,13 @@ import (
 	"os" // operating system-level operations: handle files, directories, env variables, etc
 )
 
+// Define an application struct to hold the application-wide dependencies for
+// the web application.
+type application struct {
+	errorLog *log.Logger
+	infoLog  *log.Logger
+}
+
 // define main point of entry
 func main() {
 
@@ -36,6 +43,12 @@ func main() {
 	// relevant file name and line number.
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
+	// initialize a new instance of application struct, containig the dependencies
+	app := &application{
+		errorLog: errorLog,
+		infoLog:  infoLog,
+	}
+
 	// initialize a new servemux
 	mux := http.NewServeMux()
 
@@ -51,9 +64,10 @@ func main() {
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
 	//define handlers
-	mux.HandleFunc("/", home)                        //catch-all subtree path
-	mux.HandleFunc("/snippet/view", snippetView)     // fixed path
-	mux.HandleFunc("/snippet/create", snippetCreate) // fixed path
+	//rou	te declarations use application struct's methods as the handler functions
+	mux.HandleFunc("/", app.home)                        //catch-all subtree path
+	mux.HandleFunc("/snippet/view", app.snippetView)     // fixed path
+	mux.HandleFunc("/snippet/create", app.snippetCreate) // fixed path
 
 	// Initialize a new http.Server struct. Set the Addr and Handler fields so
 	// that the server uses the same network address and routes as before,

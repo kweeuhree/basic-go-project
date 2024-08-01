@@ -4,7 +4,6 @@ package main
 // import formatting functions
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -15,7 +14,8 @@ import (
 )
 
 // define home function handler
-func home(w http.ResponseWriter, r *http.Request) {
+// signature of the home handler is defined as a method against *applicaton
+func (app *applicaton) home(w http.ResponseWriter, r *http.Request) {
 	// check if the page exists
 	if r.URL.Path != ("/") {
 		http.NotFound(w, r)
@@ -39,7 +39,9 @@ func home(w http.ResponseWriter, r *http.Request) {
 	// -- or multiple file paths passed as variadic arguments
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		log.Print(err.Error())
+		// because the home hadnler function is a method against application
+		// it can access its fields, including the error logger
+		app.errorLog.Print(err.Error())
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
@@ -50,7 +52,8 @@ func home(w http.ResponseWriter, r *http.Request) {
 	// -- of the base template (which in turn invokes title and main templates).
 	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
-		log.Print(err.Error())
+		//error logger form the application struct
+		app.errorLog.Print(err.Error())
 		http.Error(w, "Internal Server Error", 500)
 	}
 
@@ -58,7 +61,8 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 // define view snippet function
-func snippetView(w http.ResponseWriter, r *http.Request) {
+// signature of the handler is defined to be a method against the *application struct
+func (app *applicaton) snippetView(w http.ResponseWriter, r *http.Request) {
 	// get id from request URL query
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	// in case of invalid id or error return a 404 NotFound
@@ -72,7 +76,8 @@ func snippetView(w http.ResponseWriter, r *http.Request) {
 }
 
 // define create a snippet function
-func snippetCreate(w http.ResponseWriter, r *http.Request) {
+// signature is defined to be a method against the *application struct
+func (app *applicaton) snippetCreate(w http.ResponseWriter, r *http.Request) {
 	// check if method is POST
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", "POST")
