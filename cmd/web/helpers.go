@@ -13,7 +13,10 @@ import (
 // -- application via the stack trace can be helpful when you’re trying to debug errors.
 func (app *application) serverError(w http.ResponseWriter, err error) {
 	trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
-	app.errorLog.Print(trace)
+	// report the file name and line number one step back in the stack trace
+	// to have a clearer idea of where the error actually originated from
+	// set frame depth to 2
+	app.errorLog.Output(2, trace)
 
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }

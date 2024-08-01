@@ -18,7 +18,7 @@ import (
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	// check if the page exists
 	if r.URL.Path != ("/") {
-		http.NotFound(w, r)
+		app.notFound(w) // use notFound() helper
 		return
 	}
 
@@ -41,8 +41,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// because the home hadnler function is a method against application
 		// it can access its fields, including the error logger
-		app.errorLog.Print(err.Error())
-		http.Error(w, "Internal Server Error", 500)
+		app.serverError(w, err) // use serverError() helper
 		return
 	}
 	// use the Execute() method on the template set to write the
@@ -53,8 +52,8 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
 		//error logger form the application struct
-		app.errorLog.Print(err.Error())
-		http.Error(w, "Internal Server Error", 500)
+		app.notFound(w) // use notFound() helper
+		return
 	}
 
 	w.Write([]byte("hello byte"))
@@ -67,7 +66,7 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	// in case of invalid id or error return a 404 NotFound
 	if err != nil || id < 1 {
-		http.NotFound(w, r)
+		app.notFound(w) // use notFound() helper
 		// return to prevent further code execution
 		return
 	}
@@ -82,7 +81,10 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", "POST")
 		// call a http.Error shortcut
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		// http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+
+		// use clientError helper instead of a http.Error shortcut
+		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
 
