@@ -14,8 +14,8 @@ import (
 )
 
 // define home function handler
-// signature of the home handler is defined as a method against *applicaton
-func (app *applicaton) home(w http.ResponseWriter, r *http.Request) {
+// signature of the home handler is defined as a method against *application
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	// check if the page exists
 	if r.URL.Path != ("/") {
 		http.NotFound(w, r)
@@ -62,7 +62,7 @@ func (app *applicaton) home(w http.ResponseWriter, r *http.Request) {
 
 // define view snippet function
 // signature of the handler is defined to be a method against the *application struct
-func (app *applicaton) snippetView(w http.ResponseWriter, r *http.Request) {
+func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 	// get id from request URL query
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	// in case of invalid id or error return a 404 NotFound
@@ -77,7 +77,7 @@ func (app *applicaton) snippetView(w http.ResponseWriter, r *http.Request) {
 
 // define create a snippet function
 // signature is defined to be a method against the *application struct
-func (app *applicaton) snippetCreate(w http.ResponseWriter, r *http.Request) {
+func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 	// check if method is POST
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", "POST")
