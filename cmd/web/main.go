@@ -3,10 +3,20 @@ package main
 
 // import logging and net/http
 import (
-	"flag" // handle command-line glags and arguments
+	"database/sql"
+	"flag" // handle command-line flags and arguments
+	"fmt"
 	"log"
 	"net/http"
 	"os" // operating system-level operations: handle files, directories, env variables, etc
+
+	// environment variables
+	"github.com/joho/godotenv"
+
+	// we need the driver’s init() function to run so that it can register itself with the
+	// database/sql package. The trick to getting around this is to alias the package name
+	// to the blank identifier. This is standard practice for most of Go’s SQL drivers
+	_ "github.com/go-sql-driver/mysql" // with underscore
 )
 
 // Define an application struct to hold the application-wide dependencies for
@@ -23,6 +33,21 @@ type application struct {
 
 // define main point of entry
 func main() {
+	// Load environment variables from the .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+
+	// DSN string with loaded env variables
+	DSNstring := fmt.Sprintf("%s:%s@/%s?parseTime=true", dbUser, dbPassword, dbName)
+
+	// define  new command-line flag for the mysql dsn string
+	dsn := flag.String("dsn", DSNstring, "MySQL data source name")
 
 	// define a new command-line flag with name 'addr', a default value of ":4000"
 	// and short help text explaining what the flag controls. The value of the flag
@@ -30,7 +55,7 @@ func main() {
 	addr := flag.String("addr", ":4000", "HTTP network address")
 
 	// use flag.Parse() function to parse the command-line flag
-	// This reads in the command-line glaf value and assigns it to the
+	// This reads in the command-line flag value and assigns it to the
 	// addr variable. You need to call this _before_ you use the addr variable,
 	// otherwise it will always contain the default value of ":4000"
 	// application will be terminated in case of any errors
@@ -47,6 +72,16 @@ func main() {
 	// 	stderr as the destination and use the log.Lshortfile flag to include the
 	// relevant file name and line number.
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	// create connection pool, pass openDB() the dsn from the command-line flag
+	db, err := openDB(*dsn)
+	if err != nil {
+		errorLog.Fatal(err)
+	}
+
+	// defer a call to db.Close() so that the connection pool is closed before
+	// the main() function exits
+	defer db.Close()
 
 	// initialize a new instance of application struct, containig the dependencies
 	app := &application{
@@ -72,7 +107,21 @@ func main() {
 	// -- will also call os.Exit(1) after writing the message,
 	// -- causing the application to immediately exit.
 	infoLog.Printf("Starting server on %s", *addr)
-	err := srv.ListenAndServe()
+	// use assignment operator as the err variable is already declared above
+	err = srv.ListenAndServe()
 	// in case of errors log and exit
 	errorLog.Fatal(err)
+}
+
+// The openDB() function wraps sql.Open() and returns a sql.DB connection pool for a given dsn
+func openDB(dsn string) (*sql.DB, error) {
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		return nil, err
+	}
+	if err = db.Ping(); err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }

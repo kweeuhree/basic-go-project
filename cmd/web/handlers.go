@@ -22,7 +22,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Initialize a slice containing the paths to the two files. It's important
+	// Initialize a slice containing the paths to the files. It's important
 	// to note that the file containing our base template must be the *first*
 	// file in the slice.
 	files := []string{
