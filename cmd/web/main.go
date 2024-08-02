@@ -10,6 +10,10 @@ import (
 	"net/http"
 	"os" // operating system-level operations: handle files, directories, env variables, etc
 
+	// models, prefix with module path
+	// "<module-path>/internal/models"
+	"kweeuhree.snippetbox/internal/models"
+
 	// environment variables
 	"github.com/joho/godotenv"
 
@@ -24,6 +28,7 @@ import (
 type application struct {
 	errorLog *log.Logger
 	infoLog  *log.Logger
+	snippets *models.SnippetModel
 }
 
 // The responsibilities of our main() function are limited to:
@@ -83,10 +88,12 @@ func main() {
 	// the main() function exits
 	defer db.Close()
 
-	// initialize a new instance of application struct, containig the dependencies
+	// initialize a new instance of application struct, containing the dependencies,
+	// as well as models instance
 	app := &application{
 		errorLog: errorLog,
 		infoLog:  infoLog,
+		snippets: &models.SnippetModel{DB: db},
 	}
 
 	// Initialize a new http.Server struct. Set the Addr and Handler fields so
