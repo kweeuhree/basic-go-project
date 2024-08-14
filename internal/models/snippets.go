@@ -26,7 +26,7 @@ type SnippetModel struct {
 	DB *sql.DB
 }
 
-// inser a new snippet into the database
+// insert a new snippet into the database
 func (m *SnippetModel) Insert(title string, content string, expires int) (int, error) {
 	// use placeholder parameters instead of interpolating data in the SQL query
 	// as this is untrusted user input from a form
