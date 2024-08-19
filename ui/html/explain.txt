@@ -6,3 +6,16 @@ template set.
 In the context of a web application, this is useful when you want to
 provide some default content (such as a sidebar) which individual
 pages can override on a case-by-case basis if they need to.
+
+
+Nested templates
+It’s really important to note that when you’re invoking one template
+from another template, dot needs to be explicitly passed or pipelined
+to the template being invoked. You do this by including it at the end
+of each {{template}} or {{block}} action, like so:
+{{template "main" .}}
+{{block "sidebar" .}}{{end}}
+As a general rule, my advice is to get into the habit of always
+pipelining dot whenever you invoke a template with the
+{{template}} or {{block}} actions, unless you have a good reason
+not to.
