@@ -11,6 +11,10 @@ import (
 	// provides a family of functions for safely parsing and rendering HTML
 	// templates. We can use the functions in this package to parse the
 	// template file and then execute the template.
+	//The html/template package is also smart enough to make escaping
+	// context-dependent. It will use the appropriate escape sequences
+	// depending on whether the data is rendered in a part of the page that
+	// contains HTML, CSS, Javascript or a URI.
 	"html/template"
 
 	"kweeuhree.snippetbox/internal/models"
