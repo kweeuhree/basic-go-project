@@ -74,6 +74,7 @@ func (m *SnippetModel) Get(id int) (*Snippet, error) {
 
 	// Initialize a pointer to a new zeroed Snippet struct.
 	s := &Snippet{}
+	
 	// Use row.Scan() to copy the values from each field in sql.Row to the
 	// corresponding field in the Snippet struct. Notice that the arguments
 	// to row.Scan are *pointers* to the place you want to copy the data

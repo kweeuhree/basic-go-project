@@ -3,6 +3,7 @@ package main
 
 // import formatting functions
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -11,6 +12,8 @@ import (
 	// templates. We can use the functions in this package to parse the
 	// template file and then execute the template.
 	"html/template"
+
+	"kweeuhree.snippetbox/internal/models"
 )
 
 // define home function handler
@@ -71,7 +74,23 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "Display a specific snippet with ID %d...", id)
+	// Use the SnippetModel object's Get method to retrieve the data for a
+	// specific record based on its ID. If no matching record is found, return a 404 response
+	snippet, err := app.snippets.Get(id)
+	// Wrap errors to add additional information. When an error is wrapped -
+	// an entirely new error value is created. When an error is wrapped it will be exposed to callers
+	if err != nil {
+		// errors.Is unwrapps errors as necessary before checking for a match
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	// Write the snippet data as a plain-text HTTP response body
+	fmt.Fprintf(w, "%+v", snippet)
 }
 
 // define create a snippet function
