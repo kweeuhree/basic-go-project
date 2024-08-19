@@ -1,3 +1,4 @@
+Template actions and functions
 To to invoke one template from another {{template}} action can be used. 
 But Go also provides a {{block}}...{{end}} action which you can use instead. 
 This acts like the {{template}} action, except it allows you to specify some 
@@ -6,6 +7,20 @@ template set.
 In the context of a web application, this is useful when you want to
 provide some default content (such as a sidebar) which individual
 pages can override on a case-by-case basis if they need to.
+
+Control the display of dynamic data — {{if}}, {{with}} and {{range}}:
+    {{if .Foo}} C1 {{else}} C2 {{end}} 
+If .Foo is not empty then render the content C1, otherwise render the content C2.
+
+    {{with .Foo}} C1 {{else}} C2 {{end}}
+If .Foo is not empty, then set dot to the value of .Foo and render the
+content C1, otherwise render the content C2.
+
+    {{range .Foo}} C1 {{else}} C2 {{end}}
+If the length of .Foo is greater than zero then loop over each element,
+setting dot to the value of each element and rendering the content C1.
+If the length of .Foo is zero then render the content C2. The underlying
+type of .Foo must be an array, slice, map, or channel.
 
 
 Nested templates
