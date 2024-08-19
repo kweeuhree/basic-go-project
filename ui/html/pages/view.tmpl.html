@@ -1,0 +1,26 @@
+{{define "title"}}Snippet #{{.ID}}{{end}}
+{{define "main"}}
+<div class='snippet'>
+    <div class='metadata'>
+        <strong>{{.Title}}</strong>
+        <span>#{{.ID}}</span>
+    </div>
+    
+    <pre><code>{{.Content}}</code></pre>
+    
+    <div class='metadata'>
+        <time>Created: {{.Created}}</time>
+        <time>Expires: {{.Expires}}</time>
+    </div>
+</div>
+{{end}}
+
+
+<!-- Within your HTML templates, any dynamic data that you pass in is
+represented by the . character (referred to as dot).
+In this specific case, the underlying type of dot will be a
+models.Snippet struct. When the underlying type of dot is a struct,
+you can render (or yield) the value of any exported field in your
+templates by postfixing dot with the field name. So, because our
+models.Snippet struct has a Title field, we could yield the snippet
+title by writing {{.Title}} in our templates. -->
